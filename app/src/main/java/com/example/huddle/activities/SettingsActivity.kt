@@ -10,7 +10,7 @@ import android.widget.RelativeLayout
 import androidx.annotation.RequiresApi
 import androidx.appcompat.app.AppCompatActivity
 import androidx.appcompat.app.AppCompatDelegate
-import com.example.huddle.PolicyActivity
+import com.example.huddle.activities.PolicyActivity
 import com.example.huddle.R
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.materialswitch.MaterialSwitch

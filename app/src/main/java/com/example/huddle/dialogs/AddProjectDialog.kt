@@ -3,9 +3,11 @@ package com.example.huddle.dialogs
 import android.annotation.SuppressLint
 import android.os.Build
 import android.os.Bundle
+import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ArrayAdapter
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.annotation.RequiresApi
@@ -19,12 +21,14 @@ import com.google.android.material.card.MaterialCardView
 import com.google.android.material.datepicker.CalendarConstraints
 import com.google.android.material.datepicker.DateValidatorPointForward
 import com.google.android.material.datepicker.MaterialDatePicker
+import com.google.android.material.textfield.MaterialAutoCompleteTextView
 import com.google.android.material.textfield.TextInputEditText
 import com.google.android.material.timepicker.MaterialTimePicker
 import com.google.android.material.timepicker.TimeFormat
 import com.google.firebase.Firebase
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
+import com.google.firebase.firestore.firestore
 import java.text.SimpleDateFormat
 import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
@@ -59,6 +63,14 @@ class AddProjectDialog : DialogFragment() {
             dialog?.dismiss()
         }
 
+        val dropdownOptions = mutableListOf<Pair<String, String>>()
+
+        val selectProjectEdt = view.findViewById<MaterialAutoCompleteTextView>(R.id.select_project_edt)
+        var selectedProjectId = arguments?.getString("selectedProjectId")
+        var listF: MutableList<String> = mutableListOf()
+        val addProjectBtn = view.findViewById<MaterialButton>(R.id.save_project_btn)
+        val addMemberBtn = view.findViewById<MaterialCardView>(R.id.add_member_project)
+
         memberRv = view.findViewById(R.id.project_member_rv)
         memberRv.isNestedScrollingEnabled = false
         memberRv.layoutManager =
@@ -73,8 +85,11 @@ class AddProjectDialog : DialogFragment() {
         }
         memberRv.adapter = memberAdapter
 
-        view.findViewById<MaterialCardView>(R.id.add_member_project).setOnClickListener {
+        addMemberBtn.setOnClickListener {
             val dialog = SearchUserDialog.newInstance(ArrayList(memberList))
+            val args = Bundle()
+            if(listF.isNotEmpty()) args.putStringArrayList("memberList", ArrayList(listF))
+            dialog.arguments = args
             dialog.setOnUsersSelectedListener { selectedUserIds ->
                 memberList.clear()
                 memberList.addAll(selectedUserIds)
@@ -124,17 +139,13 @@ class AddProjectDialog : DialogFragment() {
                 val calendar = Calendar.getInstance(TimeZone.getDefault())
                 calendar.timeInMillis = selection.toString().toLong()
                 var myDate = format.format(calendar.time)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val formatter =
-                        DateTimeFormatter.ofPattern("dd-MM-yyyy'T'HH:mm:ss")
-                    myDate = myDate.replace("/", "-") + "T00:00:00"
-                    val dateTime = LocalDateTime.parse(myDate, formatter)
-                    val formatter1 =
-                        DateTimeFormatter.ofPattern("MMMM d, yyyy")
-                    startDateEdt.setText(dateTime.format(formatter1))
-                } else {
-                    startDateEdt.setText(myDate)
-                }
+                val formatter =
+                    DateTimeFormatter.ofPattern("dd-MM-yyyy'T'HH:mm:ss")
+                myDate = myDate.replace("/", "-") + "T00:00:00"
+                val dateTime = LocalDateTime.parse(myDate, formatter)
+                val formatter1 =
+                    DateTimeFormatter.ofPattern("MMMM d, yyyy")
+                startDateEdt.setText(dateTime.format(formatter1))
             }
         }
 
@@ -151,21 +162,67 @@ class AddProjectDialog : DialogFragment() {
                 val calendar = Calendar.getInstance(TimeZone.getDefault())
                 calendar.timeInMillis = selection.toString().toLong()
                 var myDate = format.format(calendar.time)
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-                    val formatter =
-                        DateTimeFormatter.ofPattern("dd-MM-yyyy'T'HH:mm:ss")
-                    myDate = myDate.replace("/", "-") + "T00:00:00"
-                    val dateTime = LocalDateTime.parse(myDate, formatter)
-                    val formatter1 =
-                        DateTimeFormatter.ofPattern("MMMM d, yyyy")
-                    endDateEdt.setText(dateTime.format(formatter1))
-                } else {
-                    endDateEdt.setText(myDate)
-                }
+                val formatter =
+                    DateTimeFormatter.ofPattern("dd-MM-yyyy'T'HH:mm:ss")
+                myDate = myDate.replace("/", "-") + "T00:00:00"
+                val dateTime = LocalDateTime.parse(myDate, formatter)
+                val formatter1 =
+                    DateTimeFormatter.ofPattern("MMMM d, yyyy")
+                endDateEdt.setText(dateTime.format(formatter1))
             }
         }
 
-        view.findViewById<MaterialButton>(R.id.save_project_btn).setOnClickListener {
+        FirebaseFirestore.getInstance().collection("Teams")
+            .get()
+            .addOnSuccessListener { documents ->
+                for (document in documents) {
+                    val option = document.getString("name")
+                    val documentId = document.id
+                    if(!dropdownOptions.contains(Pair(option, documentId))) option?.let { dropdownOptions.add(Pair(it, documentId)) }
+                }
+
+                if(selectedProjectId != null) {
+                    selectProjectEdt.setText(dropdownOptions.find { it.second == selectedProjectId }?.first.toString())
+                    Firebase.firestore.collection("Teams").document(selectedProjectId!!).get().addOnSuccessListener {
+                        listF = it["users"] as MutableList<String>
+                    }
+                } else {
+                    addProjectBtn.isEnabled = false
+                    addMemberBtn.isEnabled = false
+                    descEdt.isEnabled = false
+                    startDateEdt.isEnabled = false
+                    endDateEdt.isEnabled = false
+                }
+
+                val projectNames = dropdownOptions.map { it.first }
+
+                val adapter = ArrayAdapter(
+                    view.context,
+                    R.layout.dropdown_item,
+                    R.id.textViewDropdownItem,
+                    projectNames
+                )
+
+                selectProjectEdt.setAdapter(adapter)
+            }
+            .addOnFailureListener { exception ->
+                Log.e("FireStore", "Error fetching data: ", exception)
+            }
+
+        selectProjectEdt.setOnItemClickListener { parent, _, position, _ ->
+            val selectedOption = parent.getItemAtPosition(position).toString()
+            selectedProjectId = dropdownOptions.find { it.first == selectedOption }?.second.toString()
+            addProjectBtn.isEnabled = true
+            addMemberBtn.isEnabled = true
+            descEdt.isEnabled = true
+            startDateEdt.isEnabled = true
+            endDateEdt.isEnabled = true
+            Firebase.firestore.collection("Teams").document(selectedProjectId!!).get().addOnSuccessListener {
+                listF = it["members"] as MutableList<String>
+            }
+        }
+
+        addProjectBtn.setOnClickListener {
             if(!(nameEdt.text.toString().isEmpty() || descEdt.text.toString().isEmpty() || startDateEdt.text.toString().isEmpty()
                 || endDateEdt.text.toString().isEmpty())) {
                 val firestore = FirebaseFirestore.getInstance()
@@ -180,7 +237,8 @@ class AddProjectDialog : DialogFragment() {
                     "tasks" to emptyList<String>(),
                     "color" to selectedColor,
                     "users" to memberList,
-                    "favourite" to emptyList<String>()
+                    "favourite" to emptyList<String>(),
+                    "team" to selectedProjectId,
                 )
 
                 userDocument.set(projectMap)

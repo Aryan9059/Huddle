@@ -1,42 +1,100 @@
 {
   "project_info": {
-    "project_number": "1023257424965",
-    "firebase_url": "https://huddle-7f470-default-rtdb.firebaseio.com",
-    "project_id": "huddle-7f470",
-    "storage_bucket": "huddle-7f470.firebasestorage.app"
+    "project_number": "543198820946",
+    "firebase_url": "https://fizanto-fuzz.firebaseio.com",
+    "project_id": "fizanto-fuzz",
+    "storage_bucket": "fizanto-fuzz.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1023257424965:android:3b8ddea83265ebad34df2c",
+        "mobilesdk_app_id": "1:543198820946:android:c3e6953b2a67ffa5d0fd8b",
         "android_client_info": {
           "package_name": "com.example.huddle"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1023257424965-31t63m5fi5dvt9mt7lkof0985s9r53sf.apps.googleusercontent.com",
-          "client_type": 1,
-          "android_info": {
-            "package_name": "com.example.huddle",
-            "certificate_hash": "cb17a26bc2ffc877930c74f12123c86fd8cd5284"
-          }
-        },
-        {
-          "client_id": "1023257424965-r2ft299t5e6artgf9lu3hec7irrk5rbn.apps.googleusercontent.com",
+          "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCZDAies9B4kjeYsCBOWn5z0xEeM8IwCk8"
+          "current_key": "AIzaSyAtNRZ_EGKdx8yz-Sbn8LzSrWsxdfcicrE"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "1023257424965-r2ft299t5e6artgf9lu3hec7irrk5rbn.apps.googleusercontent.com",
+              "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543198820946:android:dc89defaf1bb478fd0fd8b",
+        "android_client_info": {
+          "package_name": "com.sportsclub.fizanyatik"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtNRZ_EGKdx8yz-Sbn8LzSrWsxdfcicrE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:543198820946:android:a4f33697ae504ce1d0fd8b",
+        "android_client_info": {
+          "package_name": "com.youtube.fizantofuzz"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "543198820946-ll4gsvch539i3etmioa7ck8h48dfrcfk.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.youtube.fizantofuzz",
+            "certificate_hash": "88cdaf1630fae2ef216f1df239721eb959bc96f8"
+          }
+        },
+        {
+          "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAtNRZ_EGKdx8yz-Sbn8LzSrWsxdfcicrE"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "543198820946-hhsfpm3407tjp8qvunhvjg5j33kgpshl.apps.googleusercontent.com",
               "client_type": 3
             }
           ]

@@ -1,43 +1,82 @@
 package com.example.huddle.dialogs
 
-import android.graphics.Bitmap
-import android.graphics.BitmapFactory
+import android.Manifest
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
-import android.util.Base64
-import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
+import android.widget.Toast
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.annotation.RequiresApi
 import androidx.fragment.app.DialogFragment
 import com.bumptech.glide.Glide
 import com.example.huddle.R
-import com.example.huddle.utility.decodeBase64ToBitmap
+import com.google.android.gms.tasks.Continuation
+import com.google.android.gms.tasks.Task
 import com.google.android.material.button.MaterialButton
 import com.google.android.material.card.MaterialCardView
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
 import com.google.firebase.Firebase
-import com.google.firebase.auth.UserProfileChangeRequest
 import com.google.firebase.auth.auth
 import com.google.firebase.firestore.firestore
-import java.io.ByteArrayOutputStream
+import com.google.firebase.storage.StorageReference
+import com.google.firebase.storage.StorageTask
+import com.google.firebase.storage.UploadTask
+import com.google.firebase.storage.storage
 
 class EditProfileDialog : DialogFragment() {
     private lateinit var imageUri: String
-    private var base64Image = ""
+    private lateinit var uploadTask: StorageTask<UploadTask.TaskSnapshot>
 
     private val pickMedia = registerForActivityResult(ActivityResultContracts.PickVisualMedia()) { uri ->
         if (uri != null) {
             view?.findViewById<ImageView>(R.id.edt_profile_picture)?.setImageURI(uri)
-            base64Image = encodeImageToBase64(uri)
-            imageUri = uri.toString()
-        } else {
-            Log.d("PhotoPicker", "No media selected")
+
+            val dialogBuilder = MaterialAlertDialogBuilder(requireContext())
+            dialogBuilder.setView(R.layout.dialog_progress_pic)
+                .setCancelable(false)
+
+            val pd = dialogBuilder.create()
+            pd.show()
+
+            val storageReference = Firebase.storage.reference
+            val fileReference: StorageReference =
+                storageReference.child("huddle/profile/${System.currentTimeMillis()}.jpg")
+
+            uploadTask = fileReference.putFile(uri)
+            uploadTask.continueWithTask(Continuation<UploadTask.TaskSnapshot, Task<Uri>> { task ->
+                if (!task.isSuccessful) {
+                    task.exception?.let { throw it }
+                }
+                return@Continuation fileReference.downloadUrl
+            }).addOnCompleteListener { task ->
+                if (task.isSuccessful) {
+                    val downloadUri = task.result
+                    val mUri = downloadUri.toString()
+
+                    val reference = Firebase.firestore.collection("users").document(Firebase.auth.currentUser?.uid ?: "")
+                    val map = HashMap<String, Any>()
+                    map["profile"] = mUri
+                    reference.update(map)
+                } else {
+                    Toast.makeText(requireContext(), "Failed!", Toast.LENGTH_SHORT).show()
+                }
+                pd.dismiss()
+            }.addOnFailureListener { e ->
+                Toast.makeText(requireContext(), e.message, Toast.LENGTH_SHORT).show()
+                pd.dismiss()
+            }
+
+            if (uploadTask.isInProgress) {
+                requestPermissions(
+                    arrayOf(Manifest.permission.READ_EXTERNAL_STORAGE),
+                    0
+                )
+            }
         }
     }
 
@@ -61,7 +100,6 @@ class EditProfileDialog : DialogFragment() {
         val name = arguments?.getString("name")
         val phone = arguments?.getString("phone")
         val photo = arguments?.getString("photo")
-        val photo_64 = arguments?.getString("photo_64")
 
         imageUri = photo ?: "null"
 
@@ -72,17 +110,11 @@ class EditProfileDialog : DialogFragment() {
 
         val user = Firebase.auth.currentUser
 
-        if (!photo.isNullOrEmpty() && photo != "null" && photo != "1") {
-            try {
-                Glide.with(requireContext())
-                    .load(photo)
-                    .into(view.findViewById(R.id.edt_profile_picture))
-            } catch(_: Exception) {}
-        } else if (photo == "1") {
-            view.findViewById<ImageView>(R.id.edt_profile_picture).setImageBitmap(
-                photo_64?.let { decodeBase64ToBitmap(it) }
-            )
-        }
+        try {
+            Glide.with(requireContext())
+                .load(photo)
+                .into(view.findViewById(R.id.edt_profile_picture))
+        } catch(_: Exception) {}
 
         view.findViewById<MaterialCardView>(R.id.edit_profile_picture_cv).setOnClickListener {
             pickMedia.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
@@ -106,11 +138,6 @@ class EditProfileDialog : DialogFragment() {
             val progressDialog = dialogBuilder.create()
             progressDialog.show()
 
-            if (imageUri != "null") {
-                updatePath?.update("profile_64", base64Image)
-                updatePath?.update("profile", "1")
-            }
-
             if (nameTv.text.toString().isEmpty()) {
                 nameTv.error = "Name cannot be empty"
                 progressDialog.dismiss()
@@ -125,14 +152,5 @@ class EditProfileDialog : DialogFragment() {
         view.findViewById<MaterialButton>(R.id.cancel_profile_btn).setOnClickListener {
             dialog?.dismiss()
         }
-    }
-
-    private fun encodeImageToBase64(uri: Uri): String {
-        val inputStream = context?.contentResolver?.openInputStream(uri)
-        val bitmap = BitmapFactory.decodeStream(inputStream)
-        val byteArrayOutputStream = ByteArrayOutputStream()
-        bitmap.compress(Bitmap.CompressFormat.JPEG, 100, byteArrayOutputStream)
-        val imageBytes = byteArrayOutputStream.toByteArray()
-        return Base64.encodeToString(imageBytes, Base64.DEFAULT)
     }
 }

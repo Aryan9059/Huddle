@@ -1,26 +1,22 @@
-@file:Suppress("DEPRECATION")
+package com.example.huddle.activities
 
-package com.example.huddle.fragments
-
-import android.annotation.SuppressLint
-import android.widget.RelativeLayout
-import com.example.huddle.activities.SettingsActivity
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
 import android.util.Log
-import android.view.LayoutInflater
-import android.view.View
-import android.view.ViewGroup
+import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import android.widget.ImageView
+import android.widget.RelativeLayout
 import android.widget.TextView
-import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import androidx.activity.enableEdgeToEdge
+import androidx.annotation.RequiresApi
+import androidx.appcompat.app.AppCompatActivity
+import androidx.core.view.ViewCompat
+import androidx.core.view.WindowInsetsCompat
 import androidx.fragment.app.DialogFragment
-import androidx.fragment.app.Fragment
 import com.bumptech.glide.Glide
 import com.example.huddle.R
-import com.example.huddle.activities.LoginActivity
 import com.example.huddle.data.Task
-import com.example.huddle.dialogs.AddTaskDialog
 import com.example.huddle.dialogs.EditProfileDialog
 import com.example.huddle.utility.decodeBase64ToBitmap
 import com.google.android.gms.auth.api.signin.GoogleSignIn
@@ -34,22 +30,32 @@ import com.google.firebase.auth.auth
 import com.google.firebase.firestore.FirebaseFirestore
 import com.google.firebase.firestore.firestore
 
-class ProfileFragment : Fragment() {
+class ProfileActivity : AppCompatActivity() {
     private lateinit var googleSignInClient: GoogleSignInClient
 
-    override fun onCreateView(
-        inflater: LayoutInflater, container: ViewGroup?,
-        savedInstanceState: Bundle?
-    ): View? {
-        return inflater.inflate(R.layout.fragment_profile, container, false)
-    }
+    @RequiresApi(Build.VERSION_CODES.R)
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+        setContentView(R.layout.activity_profile)
 
-    @SuppressLint("SetTextI18n")
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
+        val sharedPreferences = getSharedPreferences("ThemePrefs", MODE_PRIVATE)
+        val isNightMode = sharedPreferences.getBoolean("isNightMode", false)
 
-        val profileNameTv = view.findViewById<TextView>(R.id.profile_name_tv)
-        val profileEmailTv = view.findViewById<TextView>(R.id.profile_email_tv)
+        val window = window
+        if (isNightMode) {
+            window.decorView.windowInsetsController?.setSystemBarsAppearance(0, APPEARANCE_LIGHT_STATUS_BARS)
+        } else {
+            window.decorView.windowInsetsController?.setSystemBarsAppearance(
+                APPEARANCE_LIGHT_STATUS_BARS, APPEARANCE_LIGHT_STATUS_BARS
+            )
+        }
+
+        findViewById<MaterialCardView>(R.id.activity_profile_back).setOnClickListener {
+            finish()
+        }
+
+        val profileNameTv = findViewById<TextView>(R.id.profile_name_tv)
+        val profileEmailTv = findViewById<TextView>(R.id.profile_email_tv)
 
         val user = Firebase.auth.currentUser
         val userDocument = FirebaseFirestore.getInstance()
@@ -78,12 +84,12 @@ class ProfileFragment : Fragment() {
                         }
                     }
 
-                    view.findViewById<TextView>(R.id.on_going_task).text = taskOnGoing.toString()
-                    view.findViewById<TextView>(R.id.complete_task).text = taskComplete.toString()
+                    findViewById<TextView>(R.id.on_going_task).text = taskOnGoing.toString()
+                    findViewById<TextView>(R.id.complete_task).text = taskComplete.toString()
                 }
             }
 
-        val profilePic = view.findViewById<ImageView>(R.id.profile_pic)
+        val profilePic = findViewById<ImageView>(R.id.profile_pic)
 
         profileNameTv.text = "Loading..."
         profileEmailTv.text = "Loading..."
@@ -100,34 +106,34 @@ class ProfileFragment : Fragment() {
                 val email = documentSnapshot.getString("email")
                 val profileUrl = documentSnapshot.getString("profile")
                 val phoneNumber = documentSnapshot.getString("phone")
-                var profile_64 = ""
-                if (profileUrl == "1") profile_64 = documentSnapshot.getString("profile_64")!!
+                var profile64 = ""
+                if (profileUrl == "1") profile64 = documentSnapshot.getString("profile_64")!!
 
                 profileNameTv.text = name ?: "N/A"
                 profileEmailTv.text = email ?: "N/A"
 
-                view.findViewById<MaterialButton>(R.id.profile_edit_btn).setOnClickListener {
+                findViewById<MaterialButton>(R.id.profile_edit_btn).setOnClickListener {
                     val addTaskDialog: DialogFragment = EditProfileDialog()
                     val bundle = Bundle()
                     bundle.putString("name", name)
                     bundle.putString("phone", phoneNumber)
                     bundle.putString("photo", profileUrl)
-                    if (profileUrl == "1") bundle.putString("photo_64", profile_64)
+                    if (profileUrl == "1") bundle.putString("photo_64", profile64)
                     addTaskDialog.arguments = bundle
-                    addTaskDialog.show(parentFragmentManager, "EditProfileDialog")
+                    addTaskDialog.show(this.supportFragmentManager, "EditProfileDialog")
                 }
 
                 if (!profileUrl.isNullOrEmpty() && profileUrl != "null" && profileUrl != "1") {
                     try {
-                        Glide.with(requireContext())
+                        Glide.with(this)
                             .load(profileUrl)
                             .into(profilePic)
                     } catch(e: Exception) {
                         Log.e("ProfileFragment", "Error loading profile picture: ${e.message}")
                     }
                 } else if (profileUrl == "1") {
-                    val profile_64 = documentSnapshot.getString("profile_64")
-                    profilePic.setImageBitmap(profile_64?.let { decodeBase64ToBitmap(it) })
+                    val profile64 = documentSnapshot.getString("profile_64")
+                    profilePic.setImageBitmap(profile64?.let { decodeBase64ToBitmap(it) })
                 }
             } else {
                 profileNameTv.text = "No Data Found"
@@ -135,8 +141,8 @@ class ProfileFragment : Fragment() {
             }
         }
 
-        view.findViewById<RelativeLayout>(R.id.sign_out_rl).setOnClickListener {
-            val passDialog = MaterialAlertDialogBuilder(view.context)
+        findViewById<RelativeLayout>(R.id.sign_out_rl).setOnClickListener {
+            val passDialog = MaterialAlertDialogBuilder(this)
                 .setTitle("Sign out")
                 .setMessage("Do you want to sign out your account from the app?")
                 .setPositiveButton("OK") { dialog, _ ->
@@ -150,20 +156,20 @@ class ProfileFragment : Fragment() {
                             .build()
 
                         googleSignInClient =
-                            activity?.baseContext?.let { GoogleSignIn.getClient(it, gso) }!!
+                            this.let { GoogleSignIn.getClient(it, gso) }
 
                         googleSignInClient.signOut()
                         googleSignInClient.revokeAccess()
                     }
 
-                    val navSp = activity?.getSharedPreferences("navigation", MODE_PRIVATE)
+                    val navSp = getSharedPreferences("navigation", MODE_PRIVATE)
                     val editor = navSp?.edit()
                     editor?.putString("nav_item", "Home")
                     editor?.apply()
                     dialog.dismiss()
 
-                    activity?.finish()
-                    startActivity(Intent(context, LoginActivity::class.java))
+                    finish()
+                    startActivity(Intent(this, LoginActivity::class.java))
                 }
                 .setNegativeButton("Cancel") { dialog, _ ->
                     dialog.dismiss()
@@ -173,11 +179,9 @@ class ProfileFragment : Fragment() {
             passDialog.show()
         }
 
-        view.findViewById<RelativeLayout>(R.id.settings_layout).setOnClickListener {
-            val intent = Intent(requireContext(), SettingsActivity::class.java)
+        findViewById<RelativeLayout>(R.id.settings_layout).setOnClickListener {
+            val intent = Intent(this, SettingsActivity::class.java)
             startActivity(intent)
         }
-
-
     }
 }

@@ -5,5 +5,6 @@ data class User(
     val name: String = "",
     val profile: String = "",
     val email: String = "",
-    val lastSeen: Long = 0
+    val lastSeen: Long = 0,
+    val teams: List<String> = emptyList(),
 )

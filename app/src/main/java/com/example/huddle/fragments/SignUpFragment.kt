@@ -126,6 +126,7 @@ class SignUpFragment : Fragment() {
                                             "Sign up unsuccessful. ${task.exception}",
                                             Toast.LENGTH_LONG
                                         ).show()
+                                        Log.e("SignUp", "Error: ${task.exception}")
                                         user?.delete()
                                         progressDialog.dismiss()
                                     }

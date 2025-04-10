@@ -100,7 +100,6 @@ class TaskDetailsActivity : AppCompatActivity() {
                             if (name.equals("Completed") && task.status == 2) taskList.add(task)
                             else if(name.equals("In Progress") && task.status == 1) taskList.add(task)
                             else if(name.equals("To Do") && task.status == 0) taskList.add(task)
-
                         }
                     }
 

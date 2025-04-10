@@ -11,5 +11,6 @@ data class Project(
     val endTime: String = "",
     val users: List<String> = emptyList(),
     val tasks: List<String> = emptyList(),
-    var favourite: MutableList<String> = mutableListOf()
+    var favourite: MutableList<String> = mutableListOf(),
+    val team: String = "",
 )

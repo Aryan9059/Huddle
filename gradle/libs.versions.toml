@@ -1,10 +1,11 @@
 [versions]
-agp = "8.7.1"
+agp = "8.8.1"
 androidplotCore = "1.5.11"
 animatedpieview = "1.0.1"
 blurLayout = "1.1.1"
 blurrylayout = "2.0.0"
 blurview = "1.6.6"
+converterGson = "2.11.0"
 coreSplashscreen = "1.0.1"
 emojiAndroidxEmoji2 = "0.21.0"
 glide = "4.15.1"
@@ -28,6 +29,7 @@ firebaseAuth = "23.1.0"
 mpandroidchartVersion = "v3.1.0"
 playServicesAuth = "21.3.0"
 renderscriptApi = "1.0.0"
+retrofit = "2.11.0"
 shimmer = "0.5.0"
 firebaseMessaging = "24.1.0"
 firebaseCrashlyticsBuildtools = "3.0.2"
@@ -42,6 +44,7 @@ animatedpieview = { module = "com.github.razerdp:AnimatedPieView", version.ref =
 blur-layout = { module = "com.avito.android:blur-layout", version.ref = "blurLayout" }
 blurrylayout = { module = "com.revosleap.layout:blurrylayout", version.ref = "blurrylayout" }
 blurview = { module = "com.eightbitlab:blurview", version.ref = "blurview" }
+converter-gson = { module = "com.squareup.retrofit2:converter-gson", version.ref = "converterGson" }
 emoji-androidx-emoji2 = { module = "com.vanniktech:emoji-androidx-emoji2", version.ref = "emojiAndroidxEmoji2" }
 emoji-google-compat = { module = "com.vanniktech:emoji-google-compat", version.ref = "emojiAndroidxEmoji2" }
 glide = { module = "com.github.bumptech.glide:glide", version.ref = "glide" }
@@ -68,6 +71,7 @@ firebase-database = { group = "com.google.firebase", name = "firebase-database",
 firebase-auth = { group = "com.google.firebase", name = "firebase-auth", version.ref = "firebaseAuth" }
 philjay-mpandroidchart = { module = "com.github.PhilJay:MPAndroidChart", version.ref = "mpandroidchartVersion" }
 play-services-auth = { module = "com.google.android.gms:play-services-auth", version.ref = "playServicesAuth" }
+retrofit = { module = "com.squareup.retrofit2:retrofit", version.ref = "retrofit" }
 shimmer = { module = "com.facebook.shimmer:shimmer", version.ref = "shimmer" }
 firebase-messaging = { group = "com.google.firebase", name = "firebase-messaging", version.ref = "firebaseMessaging" }
 firebase-crashlytics-buildtools = { group = "com.google.firebase", name = "firebase-crashlytics-buildtools", version.ref = "firebaseCrashlyticsBuildtools" }
@@ -75,6 +79,6 @@ firebase-storage = { group = "com.google.firebase", name = "firebase-storage", v
 
 [plugins]
 android-application = { id = "com.android.application", version.ref = "agp" }
-kotlin-android = { id = "org.jetbrains.kotlin.android", version.ref = "kotlin" }
+kotlin-android = { id = "org.jetbrains.kotlin.android", version = "2.1.20" }
 kotlin-compose = { id = "org.jetbrains.kotlin.plugin.compose", version.ref = "kotlin" }
 google-gms-google-services = { id = "com.google.gms.google-services", version.ref = "googleGmsGoogleServices" }

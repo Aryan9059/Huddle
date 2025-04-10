@@ -9,9 +9,9 @@
               <option name="connection">
                 <ConnectionSetting>
                   <option name="appId" value="com.example.huddle" />
-                  <option name="mobileSdkAppId" value="1:1023257424965:android:3b8ddea83265ebad34df2c" />
-                  <option name="projectId" value="huddle-7f470" />
-                  <option name="projectNumber" value="1023257424965" />
+                  <option name="mobileSdkAppId" value="1:543198820946:android:c3e6953b2a67ffa5d0fd8b" />
+                  <option name="projectId" value="fizanto-fuzz" />
+                  <option name="projectNumber" value="543198820946" />
                 </ConnectionSetting>
               </option>
               <option name="signal" value="SIGNAL_UNSPECIFIED" />

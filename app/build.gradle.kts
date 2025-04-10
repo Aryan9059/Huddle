@@ -79,5 +79,8 @@ dependencies {
     implementation(libs.circleimageview)
     //Emoji View
     implementation(libs.emoji.google.compat)
+    //Retrofit
+    implementation (libs.retrofit)
+    implementation (libs.converter.gson)
 
 }

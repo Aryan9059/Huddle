@@ -9,7 +9,7 @@
     <item
         android:id="@+id/navigation_item2"
         android:icon="@drawable/bottom_folder"
-        android:title="Project" />
+        android:title="Projects" />
 
     <item
         android:id="@+id/navigation_item5"
@@ -17,12 +17,12 @@
 
     <item
         android:id="@+id/navigation_item3"
-        android:icon="@drawable/bottom_chats"
-        android:title="Community" />
+        android:icon="@drawable/three_users"
+        android:title="Your Teams" />
 
     <item
         android:id="@+id/navigation_item4"
-        android:icon="@drawable/bottom_person"
-        android:title="Profile" />
+        android:icon="@drawable/bottom_chats"
+        android:title="Community" />
 
 </menu>

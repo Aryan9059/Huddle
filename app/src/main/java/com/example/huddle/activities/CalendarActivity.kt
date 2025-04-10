@@ -9,6 +9,7 @@ import android.view.View.GONE
 import android.view.WindowInsetsController.APPEARANCE_LIGHT_STATUS_BARS
 import android.widget.TextView
 import androidx.appcompat.app.AppCompatActivity
+import androidx.core.content.ContextCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.example.huddle.R
@@ -70,11 +71,11 @@ class CalendarActivity : AppCompatActivity() {
 
             if (selectedDateString == newDateFormat.format(currentDate)) {
                 val todayCard = findViewById<MaterialCardView>(R.id.today_btn)
-                todayCard.setCardBackgroundColor(resources.getColor(R.color.accent))
+                todayCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.accent))
                 todayCard.radius = 100F
             } else {
                 val todayCard = findViewById<MaterialCardView>(R.id.today_btn)
-                todayCard.setCardBackgroundColor(resources.getColor(R.color.background))
+                todayCard.setCardBackgroundColor(ContextCompat.getColor(this, R.color.background))
                 todayCard.radius = 100F
             }
 

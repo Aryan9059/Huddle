@@ -231,10 +231,10 @@ class AddTaskDialog : DialogFragment() {
                 userDocument.set(taskMap)
                     .addOnCompleteListener { task ->
                         if (task.isSuccessful) {
-                            firestore.collection("Project").document(selectedProjectId!!).get().addOnSuccessListener {
+                            firestore.collection("Project").document(selectedProjectId).get().addOnSuccessListener {
                                 val list = it["tasks"] as MutableList<String>
                                 list.add(userDocument.id)
-                                firestore.collection("Project").document(selectedProjectId!!).update("tasks", list).addOnSuccessListener {
+                                firestore.collection("Project").document(selectedProjectId).update("tasks", list).addOnSuccessListener {
                                     dialog?.dismiss()
                                 }
                             }

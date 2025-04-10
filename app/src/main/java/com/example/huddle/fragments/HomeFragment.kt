@@ -15,6 +15,7 @@ import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.example.huddle.R
 import com.example.huddle.activities.CalendarActivity
+import com.example.huddle.activities.ProfileActivity
 import com.example.huddle.adapters.ProjectAdapter
 import com.example.huddle.adapters.TaskAdapter
 import com.example.huddle.data.Project
@@ -63,6 +64,10 @@ class HomeFragment : Fragment() {
 
         view.findViewById<MaterialCardView>(R.id.fragment_home_menu).setOnClickListener {
             startActivity(Intent(view.context, CalendarActivity::class.java))
+        }
+
+        view.findViewById<MaterialCardView>(R.id.fragment_home_profile).setOnClickListener {
+            startActivity(Intent(view.context, ProfileActivity::class.java))
         }
 
         projectShimmerLayout = view.findViewById(R.id.project_shimmer_layout)

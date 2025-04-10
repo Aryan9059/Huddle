@@ -1,4 +1,4 @@
-package com.example.huddle
+package com.example.huddle.activities
 
 import android.os.Bundle
 import android.widget.TextView
@@ -7,6 +7,7 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.text.HtmlCompat
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.example.huddle.R
 
 class PolicyActivity : AppCompatActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
